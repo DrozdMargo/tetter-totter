@@ -44,21 +44,20 @@ export default {
         this.setTopStart(-250);
       }
     },
+    startMove() {
+      if (this.canMove) {
+        this.toggleTimer();
+      } else {
+        clearInterval(this.interval);
+      }
+    }
   },
   watch: {
     isStart() {
-      if (this.canMove) {
-        this.toggleTimer();
-      } else {
-        clearInterval(this.interval);
-      }
+      this.startMove();
     },
     activeBlock() {
-      if (this.canMove) {
-        this.toggleTimer();
-      } else {
-        clearInterval(this.interval);
-      }
+      this.startMove();
     },
   }
 };

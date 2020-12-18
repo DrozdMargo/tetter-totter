@@ -42,15 +42,15 @@ export default {
     dialog: false,
   }),
   computed: {
-    ...mapState(['isStart', 'initialState']),
+    ...mapState(['isStart', 'initialState', 'topStart', 'activeBlock']),
     ...mapGetters(['gameOver']),
   },
   methods: {
     ...mapMutations(['moveActiveBlockLeft',
-      'moveActiveBlockRight', 'moveActiveBlockUp', 'setInitialState', 'run']),
+      'moveActiveBlockRight', 'setInitialState', 'run', 'moveActiveBlockUp']),
     ...mapActions(['restartGame', 'initialization']),
     runGame() {
-      this.run(!this.isStart)
+      this.run(!this.isStart);
     },
     onKeyDown(ev) {
       if (ev.keyCode === 39) {
@@ -58,12 +58,6 @@ export default {
       }
       if (ev.keyCode === 37) {
         this.moveActiveBlockLeft();
-      }
-      if (ev.keyCode === 38) {
-        this.$store.commit('setTopStart', -20);
-      }
-      if (ev.keyCode === 40) {
-        this.$store.commit('setTopStart', 30);
       }
     },
   },

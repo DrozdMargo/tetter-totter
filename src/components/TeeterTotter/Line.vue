@@ -1,8 +1,8 @@
 <template>
   <div class="line" ref="line" :style="lineRotate">
     <ActiveBlock/>
-    <BlockArea v-for="block in reachedLeftBlocks" :block="block" :key="block.shape + block.weight*4"/>
-    <BlockArea v-for="block in reachedRightBlocks" :right="true" :block="block" :key="block.shape + block.offset"/>
+    <BlockArea v-for="block in reachedLeftBlocks" :block="block" :key="block.id"/>
+    <BlockArea v-for="block in reachedRightBlocks" :right="true" :block="block" :key="block.id"/>
   </div>
 </template>
 

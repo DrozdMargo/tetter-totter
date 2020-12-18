@@ -14,6 +14,7 @@ export function generateRandomBlock() {
     weight,
     width: weight * 10,
     offset,
+    id: Date.now() + Math.random(),
   }
 }
 

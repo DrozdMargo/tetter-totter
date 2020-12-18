@@ -17,7 +17,7 @@ export default new Vuex.Store({
     activeBlock: null,
     isStart: false,
     initialState: true,
-    topStart: -250,
+    topStart: -150,
   },
   getters: {
     angleTilt(state, getters) {
@@ -26,8 +26,11 @@ export default new Vuex.Store({
         rightBlockPowerSum
       } = getters;
 
-      if (!leftBlockPowerSum || leftBlockPowerSum === rightBlockPowerSum) {
+      if (!leftBlockPowerSum ) {
         return MAX_ANGLE;
+      }
+      if(leftBlockPowerSum === rightBlockPowerSum) {
+        return 0;
       }
       return leftBlockPowerSum > rightBlockPowerSum ? (leftBlockPowerSum - rightBlockPowerSum) / leftBlockPowerSum * -100 : (rightBlockPowerSum - leftBlockPowerSum) / rightBlockPowerSum * 100;
     },
@@ -46,11 +49,11 @@ export default new Vuex.Store({
         angleTilt
       } = getters;
 
-      if (state.reachedLeftBlocks.length === state.reachedRightBlocks.length) {
+      if(state.reachedLeftBlocks.length === state.reachedRightBlocks.length) {
+        return  Math.abs(leftBlockPowerSum - rightBlockPowerSum) > WEIGHT_DIFFERENCE
       }
-      // return false;
-      return angleTilt > MAX_ANGLE || angleTilt < MIN_ANGLE || Math.abs(leftBlockPowerSum - rightBlockPowerSum) > WEIGHT_DIFFERENCE;
 
+      return angleTilt > MAX_ANGLE || angleTilt < MIN_ANGLE;
     },
   },
   mutations: {
@@ -80,25 +83,19 @@ export default new Vuex.Store({
       state.leftSideBlocks = blocks;
     },
     moveActiveBlockRight(state) {
-      if (!state.isStart || state.activeBlock.offset - 1 <= 0) {
+      if (!state.isStart || state.activeBlock.offset - 1 < 0) {
         return;
       }
       state.activeBlock.offset -= 1;
     },
     moveActiveBlockLeft(state) {
-      if (!state.isStart || state.activeBlock.offset - 1 <= 0) {
+      if (!state.isStart || state.activeBlock.offset + 1 > 5) {
         return;
       }
       state.activeBlock.offset += 1;
     },
-    moveActiveBlockUp(state) {
-      if (!state.isStart || state.activeBlock.top - 1 <= 0) {
-        return;
-      }
-      state.activeBlock.top -= 10;
-    },
     setTopStart(state, top) {
-      if (!state.isStart || state.activeBlock.top - 1 <= 0) {
+      if (!state.isStart || state.activeBlock.top - 10 <= 0) {
         return;
       }
       state.topStart += top;
@@ -124,25 +121,20 @@ export default new Vuex.Store({
     finishedMoveBlock({
       commit,
       state,
-      getters,
-      dispatch
+      getters
     }) {
-      console.log('finish', getters.gameOver);
-
       if (state.isStart && !getters.gameOver) {
         commit('addReachedLeftBlocks', state);
         commit('setActiveBlock');
-
         setTimeout(() => {
-          commit('addReachedRightBlocks', state);
-
-        }, 8000);
+          if(!getters.gameOver) {
+            commit('addReachedRightBlocks', state);
+          }
+        }, 600);
       }
     },
     restartGame({
       commit,
-      state,
-      getters,
       dispatch
     }) {
       commit('run', false);
@@ -154,9 +146,6 @@ export default new Vuex.Store({
     },
     initialization({
       commit,
-      state,
-      getters,
-      dispatch
     }) {
       commit('initialBlocksSet', 'leftSideBlocks');
       commit('initialBlocksSet', 'rightSideBlocks');
