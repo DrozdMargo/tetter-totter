@@ -1,5 +1,5 @@
 <template>
-  <BlockArea :class="isStart ? 'active-block' : ''" :block="activeBlock" :top="top" :key="activeBlock.shape"
+  <BlockArea :class="isStart ? 'active-block' : ''" :block="activeBlock" :top="topStart" :key="activeBlock.shape"
              v-if="activeBlock"/>
 </template>
 
@@ -12,38 +12,51 @@ export default {
   components: { BlockArea },
   data() {
     return {
-      top: -250,
       interval: null
     };
   },
   computed: {
-    ...mapGetters(['angleTilt']),
-    ...mapState(['activeBlock', 'isStart']),
+    ...mapGetters(['angleTilt', 'gameOver']),
+    ...mapState(['activeBlock', 'isStart', 'topStart']),
+    canMove() {
+      return this.topStart < 0 && this.activeBlock && this.isStart && !this.gameOver
+    }
   },
   methods: {
     ...mapActions(['finishedMoveBlock']),
     toggleTimer() {
-      if (this.isStart && this.top === 0) {
-        clearInterval(this.interval);
-      } else {
+      if (this.isStart && this.topStart < 0 && !this.gameOver) {
         this.interval = setInterval(this.incrementTime, 300);
+      } else {
+        clearInterval(this.interval);
       }
     },
     incrementTime() {
-      if(this.top < 0) {
-        this.top = this.top + 10;
-      }
-      console.log(this.top);
-      if(this.top === 0) {
+      if (this.canMove) {
+        this.$store.commit('setTopStart', 10);
+      } else if (this.topStart === 0) {
         clearInterval(this.interval);
         this.finishedMoveBlock();
-        this.top = -250
+        this.$store.commit('setTopStart', -250);
       }
+      clearInterval(this.interval);
     },
   },
   watch: {
-    isStart() {
-      this.toggleTimer();
+    isStart(newVal, oldVal) {
+      if (newVal && !this.gameOver) {
+        this.toggleTimer();
+      } else {
+        clearInterval(this.interval);
+      }
+    },
+    activeBlock(newVal, oldVal) {
+      console.log(this.isStart, ' activeblock');
+      if (newVal && !this.gameOver) {
+        this.toggleTimer();
+      } else {
+        clearInterval(this.interval);
+      }
     }
   }
 };

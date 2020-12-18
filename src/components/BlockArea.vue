@@ -26,9 +26,7 @@ export default {
     ...mapGetters(['angleTilt']),
     ...mapState(['isStart']),
     getBlockStyles() {
-      console.log(this.right, 'this.right');
-
-      const left = this.right ? 50 + this.block.offset : 50 - this.block.offset;
+      const left = this.right ? 50 + this.block.offset * 10 : 50 - this.block.offset * 10;
 
       return {
         width: `${this.block.width}px`,
@@ -41,13 +39,6 @@ export default {
         // transform: `rotate(${this.angleTilt / 2}deg)`
       };
     },
-  },
-  methods: {
-
-    getDistance() {
-      const left = this.right ? 50 + this.block.offset : 50 - this.block.offset;
-      return left > 50 ? left - 50 : 50 - left;
-    }
   },
 };
 </script>

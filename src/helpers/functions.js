@@ -8,10 +8,17 @@ export function getRandomInt(min, max) {
 
 export function generateRandomBlock() {
   const weight = getRandomInt(1, 10);
+  const offset = getRandomInt(1, 5);
   return {
     shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
     weight,
     width: weight * 10,
-    offset: getRandomInt(1, 45),
+    offset,
   }
+}
+
+export function getBlockPower(blocks) {
+  return blocks.reduce((block, item) => {
+    return block += item.weight * item.offset;
+  }, 0);
 }
