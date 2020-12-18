@@ -17,7 +17,7 @@ export default new Vuex.Store({
     activeBlock: null,
     isStart: false,
     initialState: true,
-    topStart: -150,
+    topStart: -250,
   },
   getters: {
     angleTilt(state, getters) {
@@ -102,7 +102,7 @@ export default new Vuex.Store({
     },
     initialBlocksSet(state, blocks) {
       let randomBlocks = [];
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 50; i++) {
         randomBlocks.push(generateRandomBlock());
       }
       state[blocks] = randomBlocks;
@@ -124,13 +124,11 @@ export default new Vuex.Store({
       getters
     }) {
       if (state.isStart && !getters.gameOver) {
-        commit('addReachedLeftBlocks', state);
+        commit('addReachedLeftBlocks');
         commit('setActiveBlock');
-        setTimeout(() => {
-          if(!getters.gameOver) {
-            commit('addReachedRightBlocks', state);
-          }
-        }, 600);
+        if (state.reachedLeftBlocks.length && state.reachedLeftBlocks.length !== state.reachedRightBlocks.length) {
+          commit('addReachedRightBlocks');
+        }
       }
     },
     restartGame({

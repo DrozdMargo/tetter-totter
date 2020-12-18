@@ -36,6 +36,8 @@ export default {
         borderBottomWidth: `${this.block.width}px`,
         left: `${left}%`,
         top: `${this.top}px`,
+        backgroundColor: this.block.shape === 'triangle' ? '' : this.block.color,
+        borderBottomColor: this.block.shape === 'triangle' ? this.block.color : '',
       };
     },
   },
