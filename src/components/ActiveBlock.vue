@@ -24,13 +24,20 @@ export default {
     canMove() {
       return this.topStart < 0 && this.activeBlock && this.isStart && !this.gameOver;
     },
+    velocity() {
+      if(this.activeBlock.weight > 5) {
+        return 100;
+      } else {
+        return 400;
+      }
+    }
   },
   methods: {
     ...mapActions(['finishedMoveBlock']),
     ...mapMutations(['setTopStart']),
     toggleTimer() {
       if (this.canMove) {
-        this.interval = setInterval(this.incrementTime, 300);
+        this.interval = setInterval(this.incrementTime, this.velocity);
       } else {
         clearInterval(this.interval);
       }

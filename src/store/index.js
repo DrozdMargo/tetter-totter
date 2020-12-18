@@ -32,7 +32,12 @@ export default new Vuex.Store({
       if(leftBlockPowerSum === rightBlockPowerSum) {
         return 0;
       }
-      return leftBlockPowerSum > rightBlockPowerSum ? (leftBlockPowerSum - rightBlockPowerSum) / leftBlockPowerSum * -100 : (rightBlockPowerSum - leftBlockPowerSum) / rightBlockPowerSum * 100;
+
+      const subtraction = Math.abs(leftBlockPowerSum - rightBlockPowerSum);
+
+      return leftBlockPowerSum > rightBlockPowerSum
+        ? subtraction / leftBlockPowerSum * -50
+        : subtraction / rightBlockPowerSum * 50;
     },
 
     leftBlockPowerSum(state) {
