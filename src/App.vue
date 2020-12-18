@@ -9,7 +9,6 @@
         <h3 class="title">Insider’s Teeter Totter</h3>
       </div>
 
-      <v-spacer></v-spacer>
     </v-app-bar>
 
     <v-main>
@@ -27,9 +26,5 @@ export default {
   components: {
     GameContent,
   },
-
-  data: () => ({
-    //
-  }),
 };
 </script>

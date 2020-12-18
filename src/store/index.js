@@ -16,6 +16,7 @@ export default new Vuex.Store({
     reachedRightBlocks: [],
     activeBlock: null,
     isStart: false,
+    initialState: true,
     topStart: -250,
   },
   getters: {
@@ -32,12 +33,9 @@ export default new Vuex.Store({
     },
 
     leftBlockPowerSum(state) {
-      console.log('left:', getBlockPower(state.reachedLeftBlocks))
       return getBlockPower(state.reachedLeftBlocks);
     },
     rightBlockPowerSum(state) {
-      console.log('right:', getBlockPower(state.reachedRightBlocks))
-
       return getBlockPower(state.reachedRightBlocks);
     },
 
@@ -49,21 +47,25 @@ export default new Vuex.Store({
       } = getters;
 
       if (state.reachedLeftBlocks.length === state.reachedRightBlocks.length) {
-        return angleTilt > MAX_ANGLE || angleTilt < MIN_ANGLE || Math.abs(leftBlockPowerSum - rightBlockPowerSum) > WEIGHT_DIFFERENCE;
       }
-      return false;
+      // return false;
+      return angleTilt > MAX_ANGLE || angleTilt < MIN_ANGLE || Math.abs(leftBlockPowerSum - rightBlockPowerSum) > WEIGHT_DIFFERENCE;
+
     },
   },
   mutations: {
     run(state, value) {
       state.isStart = value;
     },
+    setInitialState(state, value) {
+      state.initialState = value;
+    },
     setActiveBlock(state) {
       const block = state.leftSideBlocks.shift();
       state.activeBlock = Object.assign({}, block);
     },
     addReachedLeftBlocks(state) {
-      if(state.activeBlock) {
+      if (state.activeBlock) {
         state.reachedLeftBlocks.push(state.activeBlock);
       }
     },
@@ -130,10 +132,11 @@ export default new Vuex.Store({
       if (state.isStart && !getters.gameOver) {
         commit('addReachedLeftBlocks', state);
         commit('setActiveBlock');
-        commit('addReachedRightBlocks', state);
 
-        // setTimeout(() => {
-        // }, 8000);
+        setTimeout(() => {
+          commit('addReachedRightBlocks', state);
+
+        }, 8000);
       }
     },
     restartGame({
@@ -146,6 +149,20 @@ export default new Vuex.Store({
       commit('resetReachedLeftBlocks', []);
       commit('resetReachedRightBlocks', []);
       commit('resetActiveBlock');
+      commit('setInitialState', true);
+      dispatch('initialization');
+    },
+    initialization({
+      commit,
+      state,
+      getters,
+      dispatch
+    }) {
+      commit('initialBlocksSet', 'leftSideBlocks');
+      commit('initialBlocksSet', 'rightSideBlocks');
+      commit('addReachedRightBlocks');
+      commit('setActiveBlock');
+      commit('setInitialState', false);
     }
   },
   modules: {},

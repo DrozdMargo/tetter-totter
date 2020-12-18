@@ -1,10 +1,13 @@
 <template>
-  <BlockArea :class="isStart ? 'active-block' : ''" :block="activeBlock" :top="topStart" :key="activeBlock.shape"
+  <BlockArea :class="isStart ? 'active-block' : ''"
+             :block="activeBlock"
+             :top="topStart"
+             :key="activeBlock.shape"
              v-if="activeBlock"/>
 </template>
 
 <script>
-import { mapGetters, mapState, mapActions } from 'vuex';
+import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
 import BlockArea from '@/components/BlockArea.vue';
 
 export default {
@@ -19,13 +22,14 @@ export default {
     ...mapGetters(['angleTilt', 'gameOver']),
     ...mapState(['activeBlock', 'isStart', 'topStart']),
     canMove() {
-      return this.topStart < 0 && this.activeBlock && this.isStart && !this.gameOver
-    }
+      return this.topStart < 0 && this.activeBlock && this.isStart && !this.gameOver;
+    },
   },
   methods: {
     ...mapActions(['finishedMoveBlock']),
+    ...mapMutations(['setTopStart']),
     toggleTimer() {
-      if (this.isStart && this.topStart < 0 && !this.gameOver) {
+      if (this.canMove) {
         this.interval = setInterval(this.incrementTime, 300);
       } else {
         clearInterval(this.interval);
@@ -33,48 +37,29 @@ export default {
     },
     incrementTime() {
       if (this.canMove) {
-        this.$store.commit('setTopStart', 10);
+        this.setTopStart(10);
       } else if (this.topStart === 0) {
         clearInterval(this.interval);
         this.finishedMoveBlock();
-        this.$store.commit('setTopStart', -250);
+        this.setTopStart(-250);
       }
-      clearInterval(this.interval);
     },
   },
   watch: {
-    isStart(newVal, oldVal) {
-      if (newVal && !this.gameOver) {
+    isStart() {
+      if (this.canMove) {
         this.toggleTimer();
       } else {
         clearInterval(this.interval);
       }
     },
-    activeBlock(newVal, oldVal) {
-      console.log(this.isStart, ' activeblock');
-      if (newVal && !this.gameOver) {
+    activeBlock() {
+      if (this.canMove) {
         this.toggleTimer();
       } else {
         clearInterval(this.interval);
       }
-    }
+    },
   }
 };
 </script>
-
-<style lang="scss" scoped>
-@keyframes box {
-  from {
-    top: -250px;
-  }
-  to {
-    top: 0;
-  }
-}
-
-//.active-block {
-//  top: -250px;
-//  animation: box 7s ease-in-out;
-//}
-
-</style>

@@ -36,7 +36,6 @@ export default {
         borderBottomWidth: `${this.block.width}px`,
         left: `${left}%`,
         top: `${this.top}px`,
-        // transform: `rotate(${this.angleTilt / 2}deg)`
       };
     },
   },
@@ -48,7 +47,6 @@ export default {
   position: absolute;
   transform: translate(-50%, -100%);
   text-align: center;
-  //transition: .6s;
 }
 
 .circle {
